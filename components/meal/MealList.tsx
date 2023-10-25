@@ -55,7 +55,7 @@ export class MealList extends React.Component<MealListProps1, MealsState> {
 //      this.setState( {meals: this.mealsFromData});
     
     }
-    onMealUpdated = (prevMealName: string, newMealProps: BaseMealProps) => {
+    onMealUpdated = async (prevMealName: string, newMealProps: BaseMealProps) => {
       let meals = {...this.state.meals};
       if (prevMealName) {
         meals[prevMealName] = {...newMealProps, inEditMode: false};
@@ -63,22 +63,22 @@ export class MealList extends React.Component<MealListProps1, MealsState> {
         meals[newMealProps.name] = {...newMealProps, inEditMode: false};
       }
       this.setState( {meals: {...meals}}); 
-      this.save(newMealProps);
+      await this.save(newMealProps);
     }
 
     initializeMeals = async () => {
       try {
         const keys = await AsyncStorage.getAllKeys();
-        alert(`getAllKeys returned: ${keys}`);
-        
         if (!keys || keys.length === 0) {
           const allKeys: string[] = [];
+ 
+          alert("no keys read");
           let dataToStore2: [string, string][] = [];
           DATA.forEach(item => {
             dataToStore2.push([item.name,  JSON.stringify(item)]);
             allKeys.push(item.name);
           });
-          await this.loadDataFromStorage(allKeys);
+          //await this.loadDataFromStorage(allKeys);
 
           AsyncStorage.multiSet(dataToStore2, async () => {
             //todo: update state with data just read
@@ -87,6 +87,7 @@ export class MealList extends React.Component<MealListProps1, MealsState> {
           });
           
         } else {
+          alert('loading from storage');
           await this.loadDataFromStorage(keys);
         }
 
@@ -98,7 +99,7 @@ export class MealList extends React.Component<MealListProps1, MealsState> {
 
     save = async (newProps: BaseMealProps): Promise<boolean> => {
       await AsyncStorage.setItem(newProps.name, JSON.stringify(newProps), () => {
-        alert(`${newProps.name} item saved successfully: ${JSON.stringify(newProps)}`);
+        alert(`${newProps.name} item saved`);
         //this.loadDataFromStorage(newProps.name)
         //this.setState({});
       });

@@ -37,7 +37,7 @@ export class MealDate extends React.Component<MealDateProps, MealDateState> {
 
   onDateChanged = (event: DateTimePickerEvent, newDate?: Date) => {
     
-    alert(`setting new date: ${newDate}`);
+    
     if (newDate) {
       this.setState({dateValue: newDate});
       this.props.onDateChanged(newDate);
