@@ -61,8 +61,8 @@ export class MealSummary extends React.Component<MealSummaryProps> {
             datePickerOpen={this.props.lastDatePickerOpen ?? false} dateValue={this.props.meal.lastDateServed} onDateChanged={this.handleLastEnteredDateChange}></MealDate>
           </View>
           <View style={styles.buttonBar}>
-            {/*<MealDate dateLabel='Scheduled for:' onOpenDatePicker={this.onOpenNextDatePicker} 
-            datePickerOpen={this.props.scheduleDatePickerOpen ?? false} dateValue={this.props.nextDate} onDateChanged={this.scheduleFor}></MealDate>*/}
+            <MealDate dateLabel='Scheduled for:' onOpenDatePicker={this.onOpenNextDatePicker} 
+            datePickerOpen={this.props.scheduleDatePickerOpen ?? false} dateValue={this.props.meal.nextDate} onDateChanged={this.scheduleFor}></MealDate>
           </View>         
       </View>
       );    

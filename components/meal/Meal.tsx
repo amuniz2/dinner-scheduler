@@ -8,10 +8,21 @@ import ErrorBoundary from "../ErrorBoundary";
 
 export class Meal extends React.Component<MealProps, MealState> {
 
-    constructor(props: MealProps) {
-      super(props);
-      this.state = { ...this.props.meal, inEditMode: false, lastDatePickerOpen: false, scheduleDatePickerOpen: false }; 
-    }
+  constructor(props: MealProps) {
+    super(props);
+    this.state = { ...this.props.meal, inEditMode: false, lastDatePickerOpen: false, scheduleDatePickerOpen: false }; 
+  }
+
+  onNameChange = (oldName: string, newName: string) => {
+      this.setState({ name: newName });
+    };
+
+  onDescriptionChange = (name: string, newDescription: string) => {
+    this.setState({
+      description: newDescription
+    })
+  };
+
 
     editMeal = () => {
       
@@ -35,18 +46,27 @@ export class Meal extends React.Component<MealProps, MealState> {
         this.setState({scheduleDatePickerOpen: true});
       }
     }
+
+    onSaveChanges = () => {
+      this.setState({ inEditMode: false});
+      this.props.saveMeal(this.props.meal.name, {
+        ...this.state  
+        });
+    }
+
     render() {
       if (this.state.error) {
         return (<ErrorBoundary meal={this.props.meal}></ErrorBoundary>);
       }
       else if (!this.state.inEditMode) {
         //return (<MealSummary onEditMeal:this.editMeal />);
-        return (<MealSummary {...this.state} meal={this.props.meal} scheduleMeal={this.scheduleMeal} 
+        return (<MealSummary meal={this.props.meal} scheduleMeal={this.scheduleMeal} 
           onOpenDatePicker={this.onDatePickerOpened}
           setNewDateServed={this.setDateServed} 
           onEditMeal={this.editMeal} ></MealSummary>);
       } else {
-        return (<EditMeal {...this.state} onSaveMealChanges = {this.props.saveMeal}></EditMeal>);
+        return (<EditMeal meal={this.props.meal} onNameChange={this.onNameChange}  onDescriptionChange={this.onDescriptionChange} 
+          onSaveMealChanges = {this.onSaveChanges}></EditMeal>);
       }
     }  
   }

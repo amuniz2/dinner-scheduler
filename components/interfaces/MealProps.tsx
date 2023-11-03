@@ -33,8 +33,11 @@ export interface MealSummaryProps  {
     onOpenDatePicker: (t:DateType) => void
 }
 
-export interface EditMealProps extends BaseMealProps {
-    onSaveMealChanges(id: string, newMeal: BaseMealProps): void
+export interface EditMealProps {
+    meal: BaseMealProps;
+    onNameChange(oldName: string, newName: string): void
+    onDescriptionChange(name: string, newDescription: string): void
+    onSaveMealChanges(): void;
 }
 
 export interface MealProps {

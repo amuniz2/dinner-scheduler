@@ -32,56 +32,36 @@ function DateLastServed(props: { lastDateServed: Date,
 }
 
 export class EditMeal extends React.Component<EditMealProps> {
-  description!:string;
   name!: string;
-  lastDateServed: Date | undefined;
-  nextDate: Date | undefined;
-  isDatePickerOpen: boolean = false;
 
   constructor(props: EditMealProps) {
     super(props);
-    this.name = this.props.name;
+    /*this.name = this.props.name;
     this.description = this.props.description;
     this.lastDateServed = this.props.lastDateServed;
     this.nextDate = this.props.nextDate;
     this.state = ({lastDateServed: {
                     changingDate: false,
-                    date: this.props.lastDateServed}
+                    date: this.props.meal.lastDateServed}
                   });
+                  */
   }
-
-  private getLastDateServed(): string {
-    if (this.props.lastDateServed)
-      return this.props.lastDateServed.toDateString();
-    return "-";
-  }
-
 
   saveMeal = () => {
-    this.props.onSaveMealChanges(this.props.name, {
-      name: this.name,
-      description: this.description,
-      lastDateServed: this.lastDateServed,
-      nextDate: this.nextDate
-    });
-    
-    //this.props.onSaveMeal({});
+    this.props.onSaveMealChanges();
   }
-  handleNameChange = (name: string) => {
-    if (!name || name[0] >= '0' && name[0] <= '9') {
+  handleNameChange = (newName: string) => {
+    if (!newName || newName[0] >= '0' && newName[0] <= '9') {
       alert('name failed validation');
+      return;
     }
-    this.name = name;
+    this.props.onNameChange(this.name, newName);
   }
 
-  handleDescriptionChange = (des: string) => {
-
+  handleDescriptionChange = (desc: string) => {
+    this.props.onDescriptionChange(this.name, desc);
   }
 
-  handleLastEnteredDateChange = (newDate: Date) => {
-    this.lastDateServed = newDate;
-
-  }
 /*
 
       <input name="mealName" key="name" type="date" value={this.lastDateServed ? this.lastDateServed.toLocaleDateString() :  '-' }></input>
@@ -93,10 +73,10 @@ export class EditMeal extends React.Component<EditMealProps> {
       <View style={styles.item}>
         <Text style={styles.label}>Meal Name:</Text>
         <TextInput key="mealName" style={styles.editField}  
-               value={this.props.name} onChangeText={this.handleNameChange}></TextInput>
+               value={this.props.meal.name} onChangeText={this.handleNameChange}></TextInput>
   
         <Text style={styles.label}>Details</Text>
-        <TextInput key="mealDesc" style={styles.editField} value={this.props.description}
+        <TextInput key="mealDesc" style={styles.editField} value={this.props.meal.description}
          multiline={true}
         onChangeText={this.handleDescriptionChange}></TextInput>
 
@@ -118,7 +98,7 @@ export class EditMeal extends React.Component<EditMealProps> {
       padding: 20,
       marginVertical: 2,
       marginHorizontal: 2,
-      
+
     },
     label: {
       fontSize: 16,

@@ -118,7 +118,7 @@ export class MealDate extends React.Component<MealDateProps> {
       fontSize: textFontSize
     },
     buttonBar: {
-      flexDirection: "row",
+      flexDirection: "column",
       textAlignVertical: "top",
       paddingTop: 4,
     },
