@@ -1,14 +1,13 @@
-import { MealProps } from "../components/interfaces/MealProps";
+import { BaseMealProps, MealListProp, MealProps } from "../components/interfaces/MealProps";
 
-export const defaultProps: MealProps = {
+export const defaultProps: BaseMealProps = {
     name: '',
     description: '',
-    inEditMode: false,
     lastDateServed: new Date(new Date().getFullYear(), 1, 1),
     nextDate: undefined
   }
   
-export const DATA: MealProps[] = [
+export const DATA: MealListProp = [
     {
       ...defaultProps,
       name: "Spaghetti",
@@ -27,7 +26,7 @@ export const DATA: MealProps[] = [
       description: "Cajun Chicken with Fetuccini Alfredo",
       lastDateServed: new Date(2023, 10, 5)
     },
-    {
+/*    {
       ...defaultProps,
       name: "Sesame Chicken",
       description: "Sesame chicken with brown or fried rice",
@@ -95,7 +94,7 @@ export const DATA: MealProps[] = [
       description: "with mac'n'cheese",
       lastDateServed: new Date(2023, 1, 1),
       nextDate: new Date(2023,8,273)
-    }
+    }*/
   ];
   function expandMeal(item: MealProps) {
   

@@ -7,12 +7,10 @@ import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/dat
 type MealDateProps = {
   dateValue?: Date,
   dateLabel: string,
-  onDateChanged: (newDate: Date) => void
+  onDateChanged: (newDate: Date) => void,
+  datePickerOpen: boolean;
+  onOpenDatePicker: () => void
 }
-type MealDateState =  {
-  dateValue: Date | undefined,
-  datePickerOpen: boolean
-};
 
 type IconButtonProps = TouchableOpacityProps & {
   title: string;
@@ -26,59 +24,58 @@ const IconButton = ({ title, onPress, icon }: IconButtonProps) => (
   </TouchableOpacity>
 );
 
-export class MealDate extends React.Component<MealDateProps, MealDateState> {
+export class MealDate extends React.Component<MealDateProps> {
   constructor(props: MealDateProps) {
     super(props);
-    this.state = ( {
-                   dateValue: props.dateValue,
-                   datePickerOpen: false
-                  });
   }
 
   onDateChanged = (event: DateTimePickerEvent, newDate?: Date) => {
     
     
     if (newDate) {
-      this.setState({dateValue: newDate});
       this.props.onDateChanged(newDate);
     }
-    this.setState({ datePickerOpen: false});
+    
   }
 
   onEditDate = () => {
-    this.setState({
-      datePickerOpen: true,
-    });
-    let date: Date;
-    if (this.state.dateValue) {
-      date = this.state.dateValue;
+    /*let date: Date;
+    if (this.props.dateValue) {
+      date = this.props.dateValue;
     } else {
       date = new Date();
+    }*/
+    this.props.onOpenDatePicker();
+    
+  }
+
+  private days = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"];
+  private formatDate = (date?: Date): string => {
+    if (!date) {
+      console.log('returning n/a');
+      return "N/A";
     }
-    return  (<DateTimePicker
-      onChange={this.onDateChanged}
-      value = {date}
-      mode={'date'}
-    />);
+    return `${this.days[date.getUTCDay()]}, ${date.getUTCMonth()+1}/${date.getUTCDate()}/${date.getUTCFullYear()}}`;
   }
 
   render() {
-    if (this.state.datePickerOpen) {
-      return (<DateTimePicker mode="date" value={this.state.dateValue ?? new Date()} 
+    if (this.props.datePickerOpen) {
+      console.log("date when opening date picker: ", this.formatDate(this.props.dateValue));
+      return (<DateTimePicker mode="date" value={this.props.dateValue ?? new Date()} 
       onChange={this.onDateChanged} />)
     }
       
-      if (this.state.dateValue) {
+      //if (this.props.dateValue) {
         return(
           <View style={styles.buttonBar}>
             <Text style={styles.parentView}>{this.props.dateLabel}</Text>
             <View >
-              <IconButton title={this.state.dateValue.toDateString()}
+              <IconButton title={this.formatDate(this.props.dateValue)}
                 onPress={this.onEditDate} icon={<Icon  style={styles.rightIcon} name="calendar" color="#900"></Icon>}>
               </IconButton>
             </View>
           </View>);      
-      }
+      /*}
       return(
         <View style={styles.buttonBar}>
             <Text style={styles.parentView}>{this.props.dateLabel}</Text>
@@ -88,7 +85,7 @@ export class MealDate extends React.Component<MealDateProps, MealDateState> {
                 </IconButton>
             </View>
         </View>);      
-
+*/
 
   }
 }

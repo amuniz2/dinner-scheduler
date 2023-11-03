@@ -1,17 +1,9 @@
 import React from 'react';
 import { StatusBar, StyleSheet} from 'react-native';
-import { MealState } from './components/interfaces/MealProps';
-import { DATA } from './data/data';
-import { MealList, MealListProps1 } from './components/meal/MealList';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { MealList } from './components/meal/MealList';
 
-export default function App() {
-  AsyncStorage.getAllKeys();
-  const mealsFromData: {[name: string]: MealState} = {};
-  DATA.forEach((mealProps) => {
-    mealsFromData[mealProps.name] = {...mealProps, inEditMode: false};
-  });
-  return (<MealList meals={mealsFromData} />);
+export default function App() {  
+  return (<MealList />);
 };
 
 const styles = StyleSheet.create({

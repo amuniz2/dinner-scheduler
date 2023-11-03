@@ -1,7 +1,7 @@
 import React from 'react';
 import { StatusBar, Text, TouchableOpacity, View, StyleSheet, Button, GestureResponderEvent, Alert, TouchableOpacityProps } from "react-native";
 import { Colors } from 'react-native/Libraries/NewAppScreen';
-import { MealProps, MealState, MealSummaryProps } from '../interfaces/MealProps';
+import { DateType, MealSummaryProps } from '../interfaces/MealProps';
 import  Icon  from 'react-native-vector-icons/SimpleLineIcons';
 //import  Icon  from 'react-native-vector-icons';
 import { MealDate } from './MealDate';
@@ -19,7 +19,6 @@ const IconButton = ({ onPress, icon }: IconButtonProps) => (
 export class MealSummary extends React.Component<MealSummaryProps> {
   constructor(props: MealSummaryProps) {
     super(props);
-    //alert('Props: ' + JSON.stringify(props));
   }
 
 
@@ -31,43 +30,39 @@ export class MealSummary extends React.Component<MealSummaryProps> {
 
   editMeal = (event: GestureResponderEvent): void => {
     // todo: propogate to parent to change state
-    this.props.onEditMeal(this.props.name);
+    this.props.onEditMeal(this.props.meal.name);
     
   }
 
-
-  /*editMeal = (event: GestureResponderEvent) => {
-    // todo: propogate to parent to change state
-    alert("in editMeal");
-    this.setState({
-      editMode: true
-    });
-  }*/
-
-  
-  handleLastEnteredDateChange = (_newDate: Date) => {
-    this.props.setNewDateServed(this.props.name, _newDate);
+  handleLastEnteredDateChange = (newDate: Date) => {
+    this.props.setNewDateServed(this.props.meal.name, newDate);
   }
 
-  scheduleFor = (_newDate: Date) => {
-    this.props.scheduleMeal(this.props.name, _newDate);
+  scheduleFor = (newDate: Date) => {
+    this.props.scheduleMeal(this.props.meal.name, newDate);
   }
 
+  //onOpenDatePicker = () => this.props.onOpenDatePicker();
+
+  onOpenNextDatePicker = () => this.props.onOpenDatePicker(DateType.nextDate);
+  onOpenLastDatePicker = () => this.props.onOpenDatePicker(DateType.lastDate);
   render() {
     return (
       <View style={styles.item}>
         <View style = {styles.buttonBar}>
-          <Text style={styles.title}>{this.props.name}</Text>
+          <Text style={styles.title}>{this.props.meal.name}</Text>
           <IconButton
                 onPress={this.editMeal} icon={<Icon  style={styles.editIcon} name="pencil" color="#900"></Icon>}>
               </IconButton>
           </View>
-          <Text style={styles.description}>{this.props.description}</Text>
+          <Text style={styles.description}>{this.props.meal.description}</Text>
           <View style={styles.buttonBar}>
-            <MealDate dateLabel='Last served:' dateValue={this.props.lastDateServed} onDateChanged={this.handleLastEnteredDateChange}></MealDate>
+            <MealDate dateLabel='Last served:' onOpenDatePicker={this.onOpenLastDatePicker} 
+            datePickerOpen={this.props.lastDatePickerOpen ?? false} dateValue={this.props.meal.lastDateServed} onDateChanged={this.handleLastEnteredDateChange}></MealDate>
           </View>
           <View style={styles.buttonBar}>
-            <MealDate dateLabel='Scheduled for:' dateValue={this.props.nextDate} onDateChanged={this.scheduleFor}></MealDate>
+            {/*<MealDate dateLabel='Scheduled for:' onOpenDatePicker={this.onOpenNextDatePicker} 
+            datePickerOpen={this.props.scheduleDatePickerOpen ?? false} dateValue={this.props.nextDate} onDateChanged={this.scheduleFor}></MealDate>*/}
           </View>         
       </View>
       );    

@@ -58,7 +58,6 @@ export class EditMeal extends React.Component<EditMealProps> {
 
 
   saveMeal = () => {
-    alert(`calling ${this.props.onSaveMealChanges}`);
     this.props.onSaveMealChanges(this.props.name, {
       name: this.name,
       description: this.description,
@@ -80,7 +79,6 @@ export class EditMeal extends React.Component<EditMealProps> {
   }
 
   handleLastEnteredDateChange = (newDate: Date) => {
-    alert(`Date changed to ${newDate}`);
     this.lastDateServed = newDate;
 
   }
@@ -102,10 +100,6 @@ export class EditMeal extends React.Component<EditMealProps> {
          multiline={true}
         onChangeText={this.handleDescriptionChange}></TextInput>
 
-        <Text style={styles.label}>Last Served</Text>
-        <View style={styles.editDate}>
-          <MealDate dateValue={this.props.lastDateServed} onDateChanged={this.handleLastEnteredDateChange}></MealDate>
-        </View>
         <Button color="#841584" title="Save" onPress={this.saveMeal} />
         
       </View>);
