@@ -46,12 +46,13 @@ export class MealList extends React.Component<{}, MealsState> {
       console.log('NO data read!');
       return { loading: false, meals: {}};
     }
+    const meals: MealState[] = [];
     const mealsState: MealsState = {
       loading: true,
       meals: {}
     };
 
-    console.log(`data read: ${dataRead}`);
+    //console.log(`data read: ${dataRead}`);
 
     new Date()
     dataRead.forEach(kvp => {
@@ -60,20 +61,20 @@ export class MealList extends React.Component<{}, MealsState> {
 
       if (key != null && value != null) {
         const name: string = key;
-        console.log(`reading: ${name}`);
+        //console.log(`reading: ${name}`);
 
         const meal: SerializedMeal = JSON.parse(value ? value : "");
-        mealsState.meals[name] = {
+        meals.push( {
           ...meal,
           lastDateServed: meal.lastDateServed ? new Date(meal.lastDateServed) : undefined,
           nextDate: meal.nextDate ? new Date(meal.nextDate) : undefined,
           inEditMode: false
-        }
-        return mealsState;
+        });
+//        return meals;
       }
-    })
+    });
 
-    return {loading: false, meals: mealsState.meals};
+    return {loading: false, meals: this.mealService.autoScheduleMeals(meals)};
     
   }
 
@@ -120,7 +121,7 @@ export class MealList extends React.Component<{}, MealsState> {
   }
 
 
-  onMealUpdated = (prevMealName: string, newMealProps: BaseMealProps) => {
+  onMealUpdated = (prevMealName: string, newMealProps: BaseMealProps, schduleChanges: boolean = false) => {
 
       let meals = {...this.state.meals};
       const newState = {...newMealProps, inEditMode: false};

@@ -43,7 +43,7 @@ export interface EditMealProps {
 export interface MealProps {
     meal: BaseMealProps
     inEditMode: boolean
-    saveMeal: (prevMealName: string, newMealProps: BaseMealProps) => void
+    saveMeal: (prevMealName: string, newMealProps: BaseMealProps, scheduleChange: boolean) => void
     //onMealClick: () => {}
 }
 

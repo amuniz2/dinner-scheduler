@@ -31,12 +31,12 @@ export class Meal extends React.Component<MealProps, MealState> {
 
     scheduleMeal = (id: string, date: Date) => {
       this.setState({scheduleDatePickerOpen: false, nextDate: date});  
-      this.props.saveMeal(id, {...this.props.meal, nextDate: date});
+      this.props.saveMeal(id, {...this.props.meal, nextDate: date}, true);
     }
 
     setDateServed = (id: string, date: Date) => {
       this.setState({lastDatePickerOpen: false, lastDateServed: date});
-      this.props.saveMeal(id, {...this.props.meal,  lastDateServed: date});
+      this.props.saveMeal(id, {...this.props.meal,  lastDateServed: date}, true);
     }
 
     onDatePickerOpened = (t: DateType) => {
@@ -51,7 +51,7 @@ export class Meal extends React.Component<MealProps, MealState> {
       this.setState({ inEditMode: false});
       this.props.saveMeal(this.props.meal.name, {
         ...this.state  
-        });
+        }, false);
     }
 
     render() {
