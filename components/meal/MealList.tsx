@@ -1,31 +1,37 @@
 import React from "react";
-import { FlatList, SafeAreaView, Text, StatusBar, StyleSheet, Task, ActivityIndicator, View } from "react-native";
-import { BaseMealProps, MealProps, MealState, MealsState, SerializedMeal } from '../interfaces/MealProps';
+import { FlatList, SafeAreaView, Text, StatusBar, StyleSheet, Task, ActivityIndicator, View, TouchableOpacity } from "react-native";
+import { BaseMealProps, IconButtonProps, MealState, MealsState, SerializedMeal } from '../interfaces/MealProps';
 import {Meal } from './Meal';
 import {DATA, defaultProps} from '../../data/data';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { IMealService, MealService } from "../interfaces/meal.service";
-import { KeyValuePair } from "@react-native-async-storage/async-storage/lib/typescript/types";
 import ErrorBoundary from "../ErrorBoundary";
+import  Icon  from 'react-native-vector-icons/SimpleLineIcons';
 
 
+const AddIconButton = ({ onPress, icon }: IconButtonProps) => (
+  <TouchableOpacity style={styles.addIcon} onPress={onPress}>
+    {icon}
+  </TouchableOpacity>
+);
 export class MealList extends React.Component<{}, MealsState> {
 
   private mealService: IMealService;
 
   constructor(props: any, mealService: IMealService) {
     super(props);
-    const initialState:MealsState = { loading: false, meals: {} };
+    const initialState:MealsState = { loading: false, meals: [] };
     this.mealService = new MealService();
     const defaultMeals = this.mealService.getDefaultMeals();
     
     defaultMeals.forEach((meal) => {
-      initialState.meals[meal.name] = {
-        ...meal,
-        inEditMode: false
-      };
-    });
-
+      initialState.meals.push(
+        { 
+          ...meal,
+          inEditMode: false,
+          originalName: meal.name
+        });
+      });
     this.state = initialState;
 
   }
@@ -33,7 +39,6 @@ export class MealList extends React.Component<{}, MealsState> {
   componentDidMount(): void {
     
     this.initializeMeals().then((newState) => {
-      alert('initialized meals');
       this.setState({...newState});
       return newState;
     }).catch((e) => alert(`exception ${e}`));
@@ -44,17 +49,12 @@ export class MealList extends React.Component<{}, MealsState> {
     const dataRead = await AsyncStorage.multiGet(keys);
     if(!dataRead) {
       console.log('NO data read!');
-      return { loading: false, meals: {}};
+      return { loading: false, meals: []};
     }
     const meals: MealState[] = [];
-    const mealsState: MealsState = {
-      loading: true,
-      meals: {}
-    };
 
     //console.log(`data read: ${dataRead}`);
 
-    new Date()
     dataRead.forEach(kvp => {
       const key = kvp[0];
       const value = kvp[1] ?? "";
@@ -68,7 +68,8 @@ export class MealList extends React.Component<{}, MealsState> {
           ...meal,
           lastDateServed: meal.lastDateServed ? new Date(meal.lastDateServed) : undefined,
           nextDate: meal.nextDate ? new Date(meal.nextDate) : undefined,
-          inEditMode: false
+          inEditMode: false,
+          originalName: meal.name
         });
 //        return meals;
       }
@@ -82,10 +83,6 @@ export class MealList extends React.Component<{}, MealsState> {
   initializeMeals = async (): Promise<MealsState> => {
     try {
 
-      const emptyState: MealsState = {
-        loading: true,
-        meals: {}
-      };
       const keys = await AsyncStorage.getAllKeys();
       if (!keys || keys.length === 0) {
         const allKeys: string[] = [];
@@ -117,21 +114,26 @@ export class MealList extends React.Component<{}, MealsState> {
       // read key error
       console.log(`exception getting or setting all keys ${e}`);
     }
-    return { loading: false, meals: {}};
+    return { loading: false, meals: []};
   }
 
 
   onMealUpdated = (prevMealName: string, newMealProps: BaseMealProps, schduleChanges: boolean = false) => {
 
-      let meals = {...this.state.meals};
-      const newState = {...newMealProps, inEditMode: false};
+      let meals = [...this.state.meals];
+      const newState = {...newMealProps, originalName: prevMealName, inEditMode: false};
       if (prevMealName) {
-        meals[prevMealName] = newState;
+        const i = meals.findIndex(x => x.name == prevMealName);
+        if (i >= 0) {
+          meals[i] = newState;
+        } else {
+          meals.push(newState);
+        }       
       } else {
-        meals[newMealProps.name] = newState;
+        meals.push(newState);        
       }
       this.save(newMealProps);
-      this.setState( {meals: {...meals}}); 
+      this.setState( {meals: meals}); 
     }
 
 
@@ -151,28 +153,37 @@ export class MealList extends React.Component<{}, MealsState> {
         nextDate: meal.nextDate
       };
     }
+    addMeal = () => {}
+
     render() {
 
         if (this.state.loading) {
           return (<ActivityIndicator></ActivityIndicator>);
 
         }
-       const x = Object.values(this.state.meals);
         return (
-          <SafeAreaView style={styles.container}>
-          <Text>Meals</Text>
-          <FlatList
-            data={x}            
-            renderItem =  {
-              (meal) => {
-                return (<View>          
-                    <ErrorBoundary meal={this.getMealProperties(meal.item)}></ErrorBoundary>
-                    <Meal meal={ this.getMealProperties(meal.item)} inEditMode={meal.item.inEditMode} saveMeal={this.onMealUpdated} ></Meal>
-                </View>);
-              }
-            } 
-          />
-        </SafeAreaView>);
+          <View style={styles.container}>
+              <View style={styles.buttonBar}>
+                  <Text style={styles.title}>Meal Schedule</Text>
+                  <AddIconButton style={styles.addIcon} 
+                      onPress={this.addMeal} icon={<Icon  style={styles.addIcon} name="plus" color="#900"></Icon>}>
+                  </AddIconButton>
+              </View>
+            <SafeAreaView style={styles.listContainer}>
+            
+            <FlatList
+              data={this.state.meals}            
+              renderItem =  {
+                (meal) => {
+                  return (<View>          
+                      <ErrorBoundary meal={this.getMealProperties(meal.item)}></ErrorBoundary>
+                      <Meal { ...this.getMealProperties(meal.item)} inEditMode={meal.item.inEditMode} saveMeal={this.onMealUpdated} ></Meal>
+                  </View>);
+                }
+              } 
+            />
+          </SafeAreaView>
+        </View>);
     }
     /*render() {return (
       <SafeAreaView style={styles.container}>
@@ -187,7 +198,11 @@ export class MealList extends React.Component<{}, MealsState> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
+    marginTop: (StatusBar.currentHeight || 0) +4,
+  },
+  listContainer: {
+    flex: 1,
+    
   },
   item: {
     backgroundColor: '##D4E6F1',
@@ -197,9 +212,22 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
+    fontWeight: "bold",
   },
   description: {
     fontSize: 16
+  },
+  addIcon: {
+    fontSize: 18,
+    marginRight: 6,
+    verticalAlign: "middle"
+  },
+  buttonBar: {
+    flexDirection: "row",
+    margin: 10,
+    paddingVertical: 10,
+    borderBottomWidth: 1,    
+    borderTopWidth: 1,
   }
 });
 

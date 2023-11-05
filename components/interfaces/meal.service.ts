@@ -5,7 +5,7 @@ export interface IMealService {
     getDefaultMeals() : BaseMealProps[];
     getMeals() : BaseMealProps[];
     saveMeal(meal: BaseMealProps): boolean;
-    autoScheduleMeals(meals: MealState[]): {[name: string]: MealState}
+    autoScheduleMeals(meals: MealState[]): MealState[]
 }
 
 export class MealService implements IMealService {
@@ -20,38 +20,32 @@ export class MealService implements IMealService {
         return DATA;
     }
 
-    autoScheduleMeals(meals: MealState[]): {[name: string]: MealState} {
+    autoScheduleMeals(meals: MealState[]): MealState[] {
         const currentDate = new Date();
         const scheduledMeals = meals.filter(x => x.nextDate && x.nextDate >= currentDate )
         .sort((a,b) => ((a.nextDate as Date) > (b.nextDate as Date) ? 1 : a.nextDate === b.nextDate ? 0 : -1));
         const notScheduledMeals = meals.filter(x => !x.nextDate || x.nextDate < currentDate).sort((a,b) => {
             if (!a.lastDateServed) {
-                return 1;
+                return -1;
             }
             if (!b.lastDateServed) {
-                return -1;
+                return 1;
             }
             const aDate = a.nextDate as Date;
             const bDate = b.nextDate as Date;
             if (aDate === bDate) return 0;
-            if (aDate > bDate) return 1;
-            return -1;
+            if (aDate > bDate) return -1;
+            return 0;
         });
         let firstDateScheduled = scheduledMeals[0].nextDate as Date;
         let lastScheduledMealDate = scheduledMeals[scheduledMeals.length -1].nextDate as Date;
-        console.log(`meals scheduled ${firstDateScheduled} to ${lastScheduledMealDate}`);
-        notScheduledMeals.forEach(unscheduledMeal => {
-            console.log(`last scheduled date: ${lastScheduledMealDate}`);
-            
+        notScheduledMeals.forEach(unscheduledMeal => {            
             unscheduledMeal.nextDate = this.getNextWeekdayAfter(lastScheduledMealDate, 2);
             lastScheduledMealDate = unscheduledMeal.nextDate;
         });
-        const y = scheduledMeals.concat(notScheduledMeals);
-        let result: {[name: string]: MealState} = {}; 
-        y.forEach(x => {
-            result[x.name] = x;
-        });
-        return result;
+        const allMeals = scheduledMeals.concat(notScheduledMeals);
+   
+        return allMeals;
     }
 
     private getNextWeekdayAfter(date: Date, interval: number): Date {

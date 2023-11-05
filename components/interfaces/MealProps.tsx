@@ -1,4 +1,5 @@
 import React from "react";
+import { TouchableOpacityProps } from "react-native/Libraries/Components/Touchable/TouchableOpacity";
 /*export interface MealsProps extends React.PropsWithRef<any>
 {
     meals: { [name: string]: MealProps }; 
@@ -23,8 +24,8 @@ export interface SerializedMeal {
     nextDate: string,
 }
 
-export interface MealSummaryProps  {
-    meal: BaseMealProps;
+export interface MealSummaryProps extends BaseMealProps {
+    //meal: BaseMealProps;
     onEditMeal(id: string): void, // in MealSummary?,
     setNewDateServed(id: string, newDate:Date): void,
     scheduleMeal(id: string, newDate:Date): void,
@@ -34,16 +35,19 @@ export interface MealSummaryProps  {
 }
 
 export interface EditMealProps {
-    meal: BaseMealProps;
+    name: string;
+    description: string;
+    originalName: string;
     onNameChange(oldName: string, newName: string): void
     onDescriptionChange(name: string, newDescription: string): void
     onSaveMealChanges(): void;
 }
 
-export interface MealProps {
-    meal: BaseMealProps
-    inEditMode: boolean
-    saveMeal: (prevMealName: string, newMealProps: BaseMealProps, scheduleChange: boolean) => void
+export interface MealProps extends BaseMealProps{
+    //meal: BaseMealProps; 
+    inEditMode: boolean;
+    saveMeal: (prevMealName: string, newMealProps: BaseMealProps, scheduleChange: boolean) => void;
+    
     //onMealClick: () => {}
 }
 
@@ -56,9 +60,16 @@ export interface MealState {
     scheduleDatePickerOpen?: boolean;
     lastDatePickerOpen?: boolean;
     error?: Error;
+    originalName: string;
 }
 
 export interface MealsState {
-    meals: { [name: string]: MealState }; 
+    meals: MealState[]; 
     loading: boolean;
 }
+
+export type IconButtonProps = TouchableOpacityProps & {
+    icon?: any;
+  }
+  
+  

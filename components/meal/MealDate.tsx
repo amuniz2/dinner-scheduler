@@ -96,7 +96,7 @@ export class MealDate extends React.Component<MealDateProps> {
     parentView: {
       fontSize: labelFontSize,
       //margin: 2,
-      fontWeight:"bold"
+      fontWeight:"500"
     },
     rightIcon: {
       

@@ -16,20 +16,7 @@ type IconButtonProps = TouchableOpacityProps & {
   icon?: any;
 }
 
-const IconButton = ({ title, onPress, icon }: IconButtonProps) => (
-  <TouchableOpacity style={styles.item} onPress={onPress}>
-    <Text>{title}</Text>
-    {icon}
-  </TouchableOpacity>
-);
 
-function DateLastServed(props: { lastDateServed: Date,
-  onDateChanged: (newDate: Date) => void}) {
-    return  (<DateTimePicker
-    value = {props.lastDateServed}
-    mode={'date'}
-  />);
-}
 
 export class EditMeal extends React.Component<EditMealProps> {
   name!: string;
@@ -73,10 +60,10 @@ export class EditMeal extends React.Component<EditMealProps> {
       <View style={styles.item}>
         <Text style={styles.label}>Meal Name:</Text>
         <TextInput key="mealName" style={styles.editField}  
-               value={this.props.meal.name} onChangeText={this.handleNameChange}></TextInput>
+               value={this.props.name} onChangeText={this.handleNameChange}></TextInput>
   
         <Text style={styles.label}>Details</Text>
-        <TextInput key="mealDesc" style={styles.editField} value={this.props.meal.description}
+        <TextInput key="mealDesc" style={styles.editField} value={this.props.description}
          multiline={true}
         onChangeText={this.handleDescriptionChange}></TextInput>
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { StyleSheet, StatusBar, Text, View } from "react-native";
-import { BaseMealProps, DateType, MealProps, MealState } from "../interfaces/MealProps";
+import { BaseMealProps, DateType, EditMealProps, MealProps, MealState } from "../interfaces/MealProps";
 import { EditMeal } from "./EditMeal";
 import { MealSummary } from "./MealSummary";
 import ErrorBoundary from "../ErrorBoundary";
@@ -10,10 +10,14 @@ export class Meal extends React.Component<MealProps, MealState> {
 
   constructor(props: MealProps) {
     super(props);
-    this.state = { ...this.props.meal, inEditMode: false, lastDatePickerOpen: false, scheduleDatePickerOpen: false }; 
+    this.state = { ...props,
+      lastDatePickerOpen: false,
+      scheduleDatePickerOpen: false, 
+      originalName: props.name }; 
   }
 
   onNameChange = (oldName: string, newName: string) => {
+      
       this.setState({ name: newName });
     };
 
@@ -31,12 +35,12 @@ export class Meal extends React.Component<MealProps, MealState> {
 
     scheduleMeal = (id: string, date: Date) => {
       this.setState({scheduleDatePickerOpen: false, nextDate: date});  
-      this.props.saveMeal(id, {...this.props.meal, nextDate: date}, true);
+      this.props.saveMeal(id, {...this.props, nextDate: date}, true);
     }
 
     setDateServed = (id: string, date: Date) => {
       this.setState({lastDatePickerOpen: false, lastDateServed: date});
-      this.props.saveMeal(id, {...this.props.meal,  lastDateServed: date}, true);
+      this.props.saveMeal(id, {...this.props,  lastDateServed: date}, true);
     }
 
     onDatePickerOpened = (t: DateType) => {
@@ -49,24 +53,38 @@ export class Meal extends React.Component<MealProps, MealState> {
 
     onSaveChanges = () => {
       this.setState({ inEditMode: false});
-      this.props.saveMeal(this.props.meal.name, {
+      this.props.saveMeal(this.state.originalName, {
         ...this.state  
         }, false);
     }
 
+    buildEditMealProps = (): EditMealProps =>
+    {
+      const editMealProps = {
+        originalName: this.props.name,
+        name: this.state.name,
+        description: this.state.description,
+        onNameChange: this.onNameChange,
+        onDescriptionChange: this.onDescriptionChange,
+        onSaveMealChanges: this.onSaveChanges
+
+      };
+      console.log('**** editMealProps *****');
+      console.log(editMealProps);
+      return editMealProps;
+    }
     render() {
       if (this.state.error) {
-        return (<ErrorBoundary meal={this.props.meal}></ErrorBoundary>);
+        return (<ErrorBoundary meal={this.props}></ErrorBoundary>);
       }
       else if (!this.state.inEditMode) {
         //return (<MealSummary onEditMeal:this.editMeal />);
-        return (<MealSummary meal={this.props.meal} scheduleMeal={this.scheduleMeal} 
+        return (<MealSummary {...this.props} scheduleMeal={this.scheduleMeal} 
           onOpenDatePicker={this.onDatePickerOpened}
           setNewDateServed={this.setDateServed} 
           onEditMeal={this.editMeal} ></MealSummary>);
       } else {
-        return (<EditMeal meal={this.props.meal} onNameChange={this.onNameChange}  onDescriptionChange={this.onDescriptionChange} 
-          onSaveMealChanges = {this.onSaveChanges}></EditMeal>);
+        return (<EditMeal {...this.buildEditMealProps()}></EditMeal>);
       }
     }  
   }
