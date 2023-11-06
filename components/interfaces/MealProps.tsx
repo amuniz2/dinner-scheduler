@@ -40,7 +40,7 @@ export interface EditMealProps {
     originalName: string;
     onNameChange(oldName: string, newName: string): void
     onDescriptionChange(name: string, newDescription: string): void
-    onSaveMealChanges(): void;
+    onSaveMealChanges(originalName: string, name: string, newDescription: string): void;
 }
 
 export interface MealProps extends BaseMealProps{

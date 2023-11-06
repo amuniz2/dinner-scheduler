@@ -18,14 +18,16 @@ type IconButtonProps = TouchableOpacityProps & {
 
 
 
-export class EditMeal extends React.Component<EditMealProps> {
+export class EditMeal extends React.Component<EditMealProps, {name: string, description: string}> {
   name!: string;
+  description: string = "";
 
   constructor(props: EditMealProps) {
     super(props);
-    /*this.name = this.props.name;
+    this.name = this.props.name;
     this.description = this.props.description;
-    this.lastDateServed = this.props.lastDateServed;
+    this.state = { name: this.props.name, description: this.props.description};
+    /*this.lastDateServed = this.props.lastDateServed;
     this.nextDate = this.props.nextDate;
     this.state = ({lastDateServed: {
                     changingDate: false,
@@ -35,36 +37,34 @@ export class EditMeal extends React.Component<EditMealProps> {
   }
 
   saveMeal = () => {
-    this.props.onSaveMealChanges();
+    this.props.onSaveMealChanges(this.props.name, this.state.name, this.state.description);
   }
   handleNameChange = (newName: string) => {
+
     if (!newName || newName[0] >= '0' && newName[0] <= '9') {
       alert('name failed validation');
       return;
     }
-    this.props.onNameChange(this.name, newName);
+    this.name = newName;
+    
   }
 
   handleDescriptionChange = (desc: string) => {
-    this.props.onDescriptionChange(this.name, desc);
+    this.setState({description: desc});
+    this.description = desc;
   }
 
-/*
-
-      <input name="mealName" key="name" type="date" value={this.lastDateServed ? this.lastDateServed.toLocaleDateString() :  '-' }></input>
-      <input name="nextScheduledDate" key="desc" type="date" value={this.nextDate ? this.nextDate.toLocaleDateString() : '-'}></input>
-  */
   render() {
     // todo make this a form with Submit
     return  (
       <View style={styles.item}>
         <Text style={styles.label}>Meal Name:</Text>
         <TextInput key="mealName" style={styles.editField}  
-               value={this.props.name} onChangeText={this.handleNameChange}></TextInput>
+               value={this.name} onChangeText={this.handleNameChange}></TextInput>
   
         <Text style={styles.label}>Details</Text>
-        <TextInput key="mealDesc" style={styles.editField} value={this.props.description}
-         multiline={true}
+        <TextInput key="mealDesc" style={styles.editField} 
+         multiline={true} value={this.description}
         onChangeText={this.handleDescriptionChange}></TextInput>
 
         <Button color="#841584" title="Save" onPress={this.saveMeal} />

@@ -1,6 +1,6 @@
 import React from "react";
 import { FlatList, SafeAreaView, Text, StatusBar, StyleSheet, Task, ActivityIndicator, View, TouchableOpacity } from "react-native";
-import { BaseMealProps, IconButtonProps, MealState, MealsState, SerializedMeal } from '../interfaces/MealProps';
+import { BaseMealProps, IconButtonProps, MealProps, MealState, MealsState, SerializedMeal } from '../interfaces/MealProps';
 import {Meal } from './Meal';
 import {DATA, defaultProps} from '../../data/data';
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -53,15 +53,12 @@ export class MealList extends React.Component<{}, MealsState> {
     }
     const meals: MealState[] = [];
 
-    //console.log(`data read: ${dataRead}`);
-
     dataRead.forEach(kvp => {
       const key = kvp[0];
       const value = kvp[1] ?? "";
 
       if (key != null && value != null) {
         const name: string = key;
-        //console.log(`reading: ${name}`);
 
         const meal: SerializedMeal = JSON.parse(value ? value : "");
         meals.push( {
@@ -121,36 +118,37 @@ export class MealList extends React.Component<{}, MealsState> {
   onMealUpdated = (prevMealName: string, newMealProps: BaseMealProps, schduleChanges: boolean = false) => {
 
       let meals = [...this.state.meals];
-      const newState = {...newMealProps, originalName: prevMealName, inEditMode: false};
       if (prevMealName) {
-        const i = meals.findIndex(x => x.name == prevMealName);
+        const i = meals.findIndex(x => x.originalName === prevMealName);
         if (i >= 0) {
-          meals[i] = newState;
+          meals[i] = {...meals[i],...newMealProps}
         } else {
-          meals.push(newState);
+          meals.push({...newMealProps, inEditMode: false, originalName: newMealProps.name});
         }       
       } else {
-        meals.push(newState);        
+        meals.push({...newMealProps, inEditMode: false, originalName: newMealProps.name});        
       }
-      this.save(newMealProps);
       this.setState( {meals: meals}); 
+      this.save(prevMealName, newMealProps);
     }
 
 
-    save = (newProps: BaseMealProps): boolean=> {
-      const serializedMeal = JSON.stringify(newProps)
-      AsyncStorage.setItem(newProps.name, serializedMeal, () => {
+    save = (originalName: string, newProps: BaseMealProps): boolean=> {
+      const serializedMeal = JSON.stringify(newProps);
+      AsyncStorage.setItem(originalName, serializedMeal, () => {
+        console.log('item saved');
       });
       return true;
     }
 
-    getMealProperties(meal: MealState): BaseMealProps {
+    getMealProperties(meal: MealState): MealProps {
       return {
         description: meal.description,
         name: meal.name,
         error: meal.error,
         lastDateServed: meal.lastDateServed,
-        nextDate: meal.nextDate
+        nextDate: meal.nextDate,
+        scheduleDatePickerOpen: meal.scheduleDatePickerOpen
       };
     }
     addMeal = () => {}

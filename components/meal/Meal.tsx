@@ -51,10 +51,14 @@ export class Meal extends React.Component<MealProps, MealState> {
       }
     }
 
-    onSaveChanges = () => {
-      this.setState({ inEditMode: false});
-      this.props.saveMeal(this.state.originalName, {
-        ...this.state  
+    onSaveChanges = (originalName: string, newName: string, newDescription: string) => {
+      this.setState({ 
+        inEditMode: false,
+        name: newName, 
+        description: newDescription
+      });
+      this.props.saveMeal(originalName, {
+        ...this.props, name: newName, description: newDescription  
         }, false);
     }
 
@@ -62,15 +66,13 @@ export class Meal extends React.Component<MealProps, MealState> {
     {
       const editMealProps = {
         originalName: this.props.name,
-        name: this.state.name,
-        description: this.state.description,
+        name: this.props.name,
+        description: this.props.description,
         onNameChange: this.onNameChange,
         onDescriptionChange: this.onDescriptionChange,
         onSaveMealChanges: this.onSaveChanges
 
       };
-      console.log('**** editMealProps *****');
-      console.log(editMealProps);
       return editMealProps;
     }
     render() {

@@ -52,7 +52,6 @@ export class MealDate extends React.Component<MealDateProps> {
   private days = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"];
   private formatDate = (date?: Date): string => {
     if (!date) {
-      console.log('returning n/a');
       return "N/A";
     }
     return `${this.days[date.getUTCDay()]}, ${date.getUTCMonth()+1}/${date.getUTCDate()}/${date.getUTCFullYear()}}`;
@@ -60,7 +59,6 @@ export class MealDate extends React.Component<MealDateProps> {
 
   render() {
     if (this.props.datePickerOpen) {
-      console.log("date when opening date picker: ", this.formatDate(this.props.dateValue));
       return (<DateTimePicker mode="date" value={this.props.dateValue ?? new Date()} 
       onChange={this.onDateChanged} />)
     }

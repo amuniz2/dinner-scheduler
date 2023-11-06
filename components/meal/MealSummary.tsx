@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, TouchableOpacity, View, StyleSheet, GestureResponderEvent,  TouchableOpacityProps } from "react-native";
-import { DateType, IconButtonProps, MealSummaryProps } from '../interfaces/MealProps';
+import { DateType, IconButtonProps, MealState, MealSummaryProps } from '../interfaces/MealProps';
 import  Icon  from 'react-native-vector-icons/SimpleLineIcons';
 //import  Icon  from 'react-native-vector-icons';
 import { MealDate } from './MealDate';
@@ -11,16 +11,19 @@ const EditIconButton = ({ onPress, icon }: IconButtonProps) => (
   </TouchableOpacity>
 );
 
-export class MealSummary extends React.Component<MealSummaryProps> {
+interface MealSummaryState {
+  lastDatePickerOpen: boolean,
+  scheduleDatePickerOpen: boolean
+}
+
+export class MealSummary extends React.Component<MealSummaryProps, MealSummaryState> {
   constructor(props: MealSummaryProps) {
     super(props);
-  }
-
-
-  scheduleMeal(event: GestureResponderEvent): void {
-    // todo: propogate to parent to change state
-    
-    
+    this.state = 
+    { 
+      lastDatePickerOpen: props.lastDatePickerOpen ?? false,
+      scheduleDatePickerOpen: props.scheduleDatePickerOpen ?? false
+    };
   }
 
   editMeal = (event: GestureResponderEvent): void => {
@@ -31,16 +34,18 @@ export class MealSummary extends React.Component<MealSummaryProps> {
 
   handleLastEnteredDateChange = (newDate: Date) => {
     this.props.setNewDateServed(this.props.name, newDate);
+    this.setState({lastDatePickerOpen: false});
   }
 
   scheduleFor = (newDate: Date) => {
     this.props.scheduleMeal(this.props.name, newDate);
+    this.setState({scheduleDatePickerOpen: false});
   }
 
   //onOpenDatePicker = () => this.props.onOpenDatePicker();
 
-  onOpenNextDatePicker = () => this.props.onOpenDatePicker(DateType.nextDate);
-  onOpenLastDatePicker = () => this.props.onOpenDatePicker(DateType.lastDate);
+  onOpenNextDatePicker = () => this.setState({scheduleDatePickerOpen: true});
+  onOpenLastDatePicker = () => this.setState({lastDatePickerOpen: true});
   render() {
     return (
       <View style={styles.item}>
@@ -53,11 +58,11 @@ export class MealSummary extends React.Component<MealSummaryProps> {
         <Text style={styles.description}>{this.props.description}</Text>
         <View style={styles.buttonBar}>
             <MealDate dateLabel='Scheduled for:' onOpenDatePicker={this.onOpenNextDatePicker} 
-            datePickerOpen={this.props.scheduleDatePickerOpen ?? false} dateValue={this.props.nextDate} onDateChanged={this.scheduleFor}></MealDate>
+            datePickerOpen={this.state.scheduleDatePickerOpen ?? false} dateValue={this.props.nextDate} onDateChanged={this.scheduleFor}></MealDate>
         </View>         
         <View style={styles.buttonBar}>
             <MealDate dateLabel='Last served:' onOpenDatePicker={this.onOpenLastDatePicker} 
-            datePickerOpen={this.props.lastDatePickerOpen ?? false} dateValue={this.props.lastDateServed} onDateChanged={this.handleLastEnteredDateChange}></MealDate>
+            datePickerOpen={this.state.lastDatePickerOpen ?? false} dateValue={this.props.lastDateServed} onDateChanged={this.handleLastEnteredDateChange}></MealDate>
         </View>
       </View>
       );    

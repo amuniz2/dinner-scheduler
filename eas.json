@@ -5,8 +5,8 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal",
-      "gradleCommand": ":app:assembleDebug"
+      "distribution": "internal"
+      
     },
     "preview": {
       "android": {
