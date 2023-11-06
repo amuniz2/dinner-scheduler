@@ -16,96 +16,57 @@ type IconButtonProps = TouchableOpacityProps & {
   icon?: any;
 }
 
-const IconButton = ({ title, onPress, icon }: IconButtonProps) => (
-  <TouchableOpacity style={styles.item} onPress={onPress}>
-    <Text>{title}</Text>
-    {icon}
-  </TouchableOpacity>
-);
 
-function DateLastServed(props: { lastDateServed: Date,
-  onDateChanged: (newDate: Date) => void}) {
-    return  (<DateTimePicker
-    value = {props.lastDateServed}
-    mode={'date'}
-  />);
-}
 
-export class EditMeal extends React.Component<EditMealProps> {
-  description!:string;
+export class EditMeal extends React.Component<EditMealProps, {name: string, description: string}> {
   name!: string;
-  lastDateServed: Date | undefined;
-  nextDate: Date | undefined;
-  isDatePickerOpen: boolean = false;
+  description: string = "";
 
   constructor(props: EditMealProps) {
     super(props);
     this.name = this.props.name;
     this.description = this.props.description;
-    this.lastDateServed = this.props.lastDateServed;
+    this.state = { name: this.props.name, description: this.props.description};
+    /*this.lastDateServed = this.props.lastDateServed;
     this.nextDate = this.props.nextDate;
     this.state = ({lastDateServed: {
                     changingDate: false,
-                    date: this.props.lastDateServed}
+                    date: this.props.meal.lastDateServed}
                   });
+                  */
   }
-
-  private getLastDateServed(): string {
-    if (this.props.lastDateServed)
-      return this.props.lastDateServed.toDateString();
-    return "-";
-  }
-
 
   saveMeal = () => {
-    alert(`calling ${this.props.onSaveMealChanges}`);
-    this.props.onSaveMealChanges(this.props.name, {
-      name: this.name,
-      description: this.description,
-      lastDateServed: this.lastDateServed,
-      nextDate: this.nextDate
-    });
-    
-    //this.props.onSaveMeal({});
+    this.props.onSaveMealChanges(this.props.name, this.state.name, this.state.description);
   }
-  handleNameChange = (name: string) => {
-    if (!name || name[0] >= '0' && name[0] <= '9') {
+  handleNameChange = (newName: string) => {
+
+    if (!newName || newName[0] >= '0' && newName[0] <= '9') {
       alert('name failed validation');
+      return;
     }
-    this.name = name;
+    this.name = newName;
+    
   }
 
-  handleDescriptionChange = (des: string) => {
-
+  handleDescriptionChange = (desc: string) => {
+    this.setState({description: desc});
+    this.description = desc;
   }
 
-  handleLastEnteredDateChange = (newDate: Date) => {
-    alert(`Date changed to ${newDate}`);
-    this.lastDateServed = newDate;
-
-  }
-/*
-
-      <input name="mealName" key="name" type="date" value={this.lastDateServed ? this.lastDateServed.toLocaleDateString() :  '-' }></input>
-      <input name="nextScheduledDate" key="desc" type="date" value={this.nextDate ? this.nextDate.toLocaleDateString() : '-'}></input>
-  */
   render() {
     // todo make this a form with Submit
     return  (
       <View style={styles.item}>
         <Text style={styles.label}>Meal Name:</Text>
         <TextInput key="mealName" style={styles.editField}  
-               value={this.props.name} onChangeText={this.handleNameChange}></TextInput>
+               value={this.name} onChangeText={this.handleNameChange}></TextInput>
   
         <Text style={styles.label}>Details</Text>
-        <TextInput key="mealDesc" style={styles.editField} value={this.props.description}
-         multiline={true}
+        <TextInput key="mealDesc" style={styles.editField} 
+         multiline={true} value={this.description}
         onChangeText={this.handleDescriptionChange}></TextInput>
 
-        <Text style={styles.label}>Last Served</Text>
-        <View style={styles.editDate}>
-          <MealDate dateValue={this.props.lastDateServed} onDateChanged={this.handleLastEnteredDateChange}></MealDate>
-        </View>
         <Button color="#841584" title="Save" onPress={this.saveMeal} />
         
       </View>);
@@ -124,7 +85,7 @@ export class EditMeal extends React.Component<EditMealProps> {
       padding: 20,
       marginVertical: 2,
       marginHorizontal: 2,
-      
+
     },
     label: {
       fontSize: 16,

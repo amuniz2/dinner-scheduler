@@ -11,20 +11,14 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true
-    },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+      "package": "com.amuniz.dinnerscheduler"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "32afcc83-8ff4-404a-93d8-d2b8c8555f11"
       }
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    }
+    "owner": "amuniz27"
   }
 }

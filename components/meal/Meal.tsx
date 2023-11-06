@@ -1,47 +1,92 @@
 import React, { useState } from "react";
-import { StyleSheet, StatusBar, GestureResponderEvent } from "react-native";
-import { BaseMealProps, MealProps, MealState } from "../interfaces/MealProps";
+import { StyleSheet, StatusBar, Text, View } from "react-native";
+import { BaseMealProps, DateType, EditMealProps, MealProps, MealState } from "../interfaces/MealProps";
 import { EditMeal } from "./EditMeal";
 import { MealSummary } from "./MealSummary";
+import ErrorBoundary from "../ErrorBoundary";
+
 
 export class Meal extends React.Component<MealProps, MealState> {
 
-    constructor(props: MealProps) {
-      super(props);
-      this.state = { ...props }; 
-    }
+  constructor(props: MealProps) {
+    super(props);
+    this.state = { ...props,
+      lastDatePickerOpen: false,
+      scheduleDatePickerOpen: false, 
+      originalName: props.name }; 
+  }
+
+  onNameChange = (oldName: string, newName: string) => {
+      
+      this.setState({ name: newName });
+    };
+
+  onDescriptionChange = (name: string, newDescription: string) => {
+    this.setState({
+      description: newDescription
+    })
+  };
+
 
     editMeal = () => {
       
-      alert(`editing ${this.state.name}`);
       this.setState({inEditMode: true});
     }
 
-    saveMeal = (id: string, newProps: BaseMealProps) => {
-      this.setState( {
-        ...newProps,
-        inEditMode: false
-      });
-      this.props.saveMeal(id, newProps);
-    }
-
     scheduleMeal = (id: string, date: Date) => {
-      alert(`editing ${this.state.name} inside scheduleMeal`);
-      
-      this.saveMeal(id, {...this.props, nextDate: date});
+      this.setState({scheduleDatePickerOpen: false, nextDate: date});  
+      this.props.saveMeal(id, {...this.props, nextDate: date}, true);
     }
 
     setDateServed = (id: string, date: Date) => {
-      alert(`editing ${this.state.name} inside setDateServed`);
-     this.saveMeal(id, {...this.props,  lastDateServed: date});
+      this.setState({lastDatePickerOpen: false, lastDateServed: date});
+      this.props.saveMeal(id, {...this.props,  lastDateServed: date}, true);
     }
 
-    render() {
-      if (!this.state.inEditMode) {
-        //return (<MealSummary onEditMeal:this.editMeal />);
-        return (<MealSummary {...this.state} scheduleMeal={this.scheduleMeal} setNewDateServed={this.setDateServed} onEditMeal={this.editMeal} ></MealSummary>);
+    onDatePickerOpened = (t: DateType) => {
+      if (t === DateType.lastDate) {
+        this.setState({lastDatePickerOpen: true});
       } else {
-        return (<EditMeal {...this.state} onSaveMealChanges = {this.saveMeal}></EditMeal>);
+        this.setState({scheduleDatePickerOpen: true});
+      }
+    }
+
+    onSaveChanges = (originalName: string, newName: string, newDescription: string) => {
+      this.setState({ 
+        inEditMode: false,
+        name: newName, 
+        description: newDescription
+      });
+      this.props.saveMeal(originalName, {
+        ...this.props, name: newName, description: newDescription  
+        }, false);
+    }
+
+    buildEditMealProps = (): EditMealProps =>
+    {
+      const editMealProps = {
+        originalName: this.props.name,
+        name: this.props.name,
+        description: this.props.description,
+        onNameChange: this.onNameChange,
+        onDescriptionChange: this.onDescriptionChange,
+        onSaveMealChanges: this.onSaveChanges
+
+      };
+      return editMealProps;
+    }
+    render() {
+      if (this.state.error) {
+        return (<ErrorBoundary meal={this.props}></ErrorBoundary>);
+      }
+      else if (!this.state.inEditMode) {
+        //return (<MealSummary onEditMeal:this.editMeal />);
+        return (<MealSummary {...this.props} scheduleMeal={this.scheduleMeal} 
+          onOpenDatePicker={this.onDatePickerOpened}
+          setNewDateServed={this.setDateServed} 
+          onEditMeal={this.editMeal} ></MealSummary>);
+      } else {
+        return (<EditMeal {...this.buildEditMealProps()}></EditMeal>);
       }
     }  
   }
@@ -51,7 +96,15 @@ export class Meal extends React.Component<MealProps, MealState> {
       flex: 1,
       marginTop: StatusBar.currentHeight || 0,
     },
-    item: {
+    error: {
+    backgroundColor: '##D4E6F1',
+    color: '#ff0000',
+    padding: 20,
+    marginVertical: 8,
+    marginHorizontal: 16
+    },
+  
+  item: {
       backgroundColor: '##D4E6F1',
       padding: 20,
       marginVertical: 8,
