@@ -22,9 +22,12 @@ export class MealService implements IMealService {
 
     autoScheduleMeals(meals: MealState[]): MealState[] {
         const currentDate = new Date();
-        const scheduledMeals = meals.filter(x => x.nextDate && x.nextDate >= currentDate )
+        currentDate.setHours(0,0,0,0);
+
+        const scheduledMeals = meals.filter(x => x.nextDate )
         .sort((a,b) => ((a.nextDate as Date) > (b.nextDate as Date) ? 1 : a.nextDate === b.nextDate ? 0 : -1));
-        const notScheduledMeals = meals.filter(x => !x.nextDate || x.nextDate < currentDate).sort((a,b) => {
+
+        const notScheduledMeals = meals.filter(x => !x.nextDate).sort((a,b) => {
             const aDate = a.lastDateServed as Date;
             const bDate = b.lastDateServed as Date;
             if (!aDate) {
@@ -38,6 +41,9 @@ export class MealService implements IMealService {
             return 1;
         });
         let lastScheduledMealDate = scheduledMeals[scheduledMeals.length -1].nextDate as Date;
+        if (lastScheduledMealDate < currentDate) {
+            lastScheduledMealDate = currentDate;
+        }
         notScheduledMeals.forEach(unscheduledMeal => {            
             unscheduledMeal.nextDate = this.getNextWeekdayAfter(lastScheduledMealDate, 2);
             lastScheduledMealDate = unscheduledMeal.nextDate;
