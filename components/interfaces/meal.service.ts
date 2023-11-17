@@ -24,10 +24,11 @@ export class MealService implements IMealService {
         const currentDate = new Date();
         currentDate.setHours(0,0,0,0);
 
-        const scheduledMeals = meals.filter(x => x.nextDate )
+        const scheduledMeals = meals.filter(x => x.nextDate && (!x.lastDateServed || x.nextDate > x.lastDateServed))
         .sort((a,b) => ((a.nextDate as Date) > (b.nextDate as Date) ? 1 : a.nextDate === b.nextDate ? 0 : -1));
 
-        const notScheduledMeals = meals.filter(x => !x.nextDate).sort((a,b) => {
+        /*const notScheduledMeals = meals.filter(x => !x.nextDate || x.nextDate < x.lastDateServed)*/
+        const notScheduledMeals = meals.filter(m => !scheduledMeals.includes(m, 0)).sort((a,b) => {
             const aDate = a.lastDateServed as Date;
             const bDate = b.lastDateServed as Date;
             if (!aDate) {
