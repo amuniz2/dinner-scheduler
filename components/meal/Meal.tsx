@@ -5,7 +5,6 @@ import { EditMeal } from "./EditMeal";
 import { MealSummary } from "./MealSummary";
 import ErrorBoundary from "../ErrorBoundary";
 
-
 export class Meal extends React.Component<MealProps, MealState> {
 
   constructor(props: MealProps) {
@@ -36,6 +35,10 @@ export class Meal extends React.Component<MealProps, MealState> {
     scheduleMeal = (id: string, date: Date) => {
       this.setState({scheduleDatePickerOpen: false, nextDate: date});  
       this.props.saveMeal(id, {...this.props, nextDate: date}, true);
+    }
+    unscheduleMeal = (id: string) => {
+      this.setState({nextDate: undefined});  
+      this.props.saveMeal(id, {...this.props, nextDate: undefined}, true);
     }
 
     setDateServed = (id: string, date: Date) => {
@@ -84,6 +87,7 @@ export class Meal extends React.Component<MealProps, MealState> {
         return (<MealSummary {...this.props} scheduleMeal={this.scheduleMeal} 
           onOpenDatePicker={this.onDatePickerOpened}
           setNewDateServed={this.setDateServed} 
+          unscheduleMeal={this.unscheduleMeal}
           onEditMeal={this.editMeal} ></MealSummary>);
       } else {
         return (<EditMeal {...this.buildEditMealProps()}></EditMeal>);

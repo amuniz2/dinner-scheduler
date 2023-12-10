@@ -5,8 +5,15 @@ import  Icon  from 'react-native-vector-icons/SimpleLineIcons';
 //import  Icon  from 'react-native-vector-icons';
 import { MealDate } from './MealDate';
 
+
 const EditIconButton = ({ onPress, icon }: IconButtonProps) => (
   <TouchableOpacity style={styles.editIcon} onPress={onPress}>
+    {icon}
+  </TouchableOpacity>
+);
+
+const IconOnly = ({ onPress, icon }: IconButtonProps) => (
+  <TouchableOpacity style={styles.icon} onPress={onPress}>
     {icon}
   </TouchableOpacity>
 );
@@ -44,6 +51,9 @@ export class MealSummary extends React.Component<MealSummaryProps, MealSummarySt
 
   //onOpenDatePicker = () => this.props.onOpenDatePicker();
 
+  onUnschedule  = () => {
+    this.props.unscheduleMeal(this.props.name); 
+  }
   onOpenNextDatePicker = () => this.setState({scheduleDatePickerOpen: true});
   onOpenLastDatePicker = () => this.setState({lastDatePickerOpen: true});
   render() {
@@ -57,8 +67,11 @@ export class MealSummary extends React.Component<MealSummaryProps, MealSummarySt
         </View>
         <Text style={styles.description}>{this.props.description}</Text>
         <View style={styles.buttonBar}>
-            <MealDate dateLabel='Scheduled for:' onOpenDatePicker={this.onOpenNextDatePicker} 
+            <MealDate dateLabel={this.props.nextDate ? 'Scheduled for:' : 'Not Scheduled'} onOpenDatePicker={this.onOpenNextDatePicker} 
             datePickerOpen={this.state.scheduleDatePickerOpen ?? false} dateValue={this.props.nextDate} onDateChanged={this.scheduleFor}></MealDate>
+            <IconOnly 
+                onPress={this.onUnschedule} icon={<Icon  style={styles.rightIcon} name="close-a" color="#900"></Icon>}>
+            </IconOnly>  
         </View>         
         <View style={styles.buttonBar}>
             <MealDate dateLabel='Last served:' onOpenDatePicker={this.onOpenLastDatePicker} 
@@ -67,7 +80,9 @@ export class MealSummary extends React.Component<MealSummaryProps, MealSummarySt
       </View>
       );    
   }
+
 }
+const textFontSize = 18; 
 const styles = StyleSheet.create({
     item: {
       color: '##D4E6F1',
@@ -80,6 +95,17 @@ const styles = StyleSheet.create({
       marginHorizontal: 16,
       flex: 1,
     },
+    icon: {
+      color: '##D4E6F1',
+      borderBottomWidth: 0,
+      BorderTopWidth: 0,
+      borderLeftWidth: 0,
+      borderRightWidth: 0,
+      padding: 16,
+      marginVertical: 8,
+      marginHorizontal: 16,
+      flex: 1,
+    },    
     title: {
       fontSize: 18,
       fontWeight: "bold",
@@ -104,6 +130,12 @@ const styles = StyleSheet.create({
       fontSze: 18,
       justifyContent: "space-between",
       marginBottom: 2
-    }
+    },
+    rightIcon: {      
+      alignSelf: "flex-end",
+          color: "#841584",
+      marginLeft:10,
+      fontSize: textFontSize + 2
+      },    
   });
   

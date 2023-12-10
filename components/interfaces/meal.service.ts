@@ -28,6 +28,7 @@ export class MealService implements IMealService {
         .sort((a,b) => ((a.nextDate as Date) > (b.nextDate as Date) ? 1 : a.nextDate === b.nextDate ? 0 : -1));
 
         /*const notScheduledMeals = meals.filter(x => !x.nextDate || x.nextDate < x.lastDateServed)*/
+        
         const notScheduledMeals = meals.filter(m => !scheduledMeals.includes(m, 0)).sort((a,b) => {
             const aDate = a.lastDateServed as Date;
             const bDate = b.lastDateServed as Date;
@@ -45,10 +46,14 @@ export class MealService implements IMealService {
         if (lastScheduledMealDate < currentDate) {
             lastScheduledMealDate = currentDate;
         }
-        notScheduledMeals.forEach(unscheduledMeal => {            
+        let numberOfMealsScheduled = scheduledMeals.length;
+        let numberOfMealsNotScheduled = notScheduledMeals.length;
+        const numberOfmealsToSchedule = numberOfMealsScheduled < Math.min(3, numberOfMealsNotScheduled) ? numberOfMealsScheduled - Math.min(3, numberOfMealsNotScheduled) : 0;
+        for (let i = 0; i < numberOfmealsToSchedule; i++) {
+            const unscheduledMeal = notScheduledMeals[i];
             unscheduledMeal.nextDate = this.getNextWeekdayAfter(lastScheduledMealDate, 2);
             lastScheduledMealDate = unscheduledMeal.nextDate;
-        });
+        }
         const allMeals = scheduledMeals.concat(notScheduledMeals);
    
         return allMeals;

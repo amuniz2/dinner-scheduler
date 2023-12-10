@@ -29,6 +29,7 @@ export interface MealSummaryProps extends BaseMealProps {
     onEditMeal(id: string): void, // in MealSummary?,
     setNewDateServed(id: string, newDate:Date): void,
     scheduleMeal(id: string, newDate:Date): void,
+    unscheduleMeal(id: string): void,
     scheduleDatePickerOpen?: boolean
     lastDatePickerOpen?: boolean
     onOpenDatePicker: (t:DateType) => void

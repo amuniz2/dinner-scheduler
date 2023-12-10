@@ -135,20 +135,21 @@ export class MealList extends React.Component<{}, MealsState> {
 
     save = (originalName: string, newProps: BaseMealProps): boolean=> {
       const serializedMeal = JSON.stringify(newProps);
+      console.log(`serialized meal: ${serializedMeal}`);
       AsyncStorage.setItem(originalName, serializedMeal, () => {
         console.log('item saved');
       });
       return true;
     }
 
-    getMealProperties(meal: MealState): MealProps {
+    getMealProperties(meal: MealState): any {
       return {
         description: meal.description,
         name: meal.name,
         error: meal.error,
         lastDateServed: meal.lastDateServed,
-        nextDate: meal.nextDate,
-        scheduleDatePickerOpen: meal.scheduleDatePickerOpen
+        nextDate: meal.nextDate
+        //scheduleDatePickerOpen: meal.scheduleDatePickerOpen
       };
     }
     addMeal = () => {}
@@ -173,8 +174,7 @@ export class MealList extends React.Component<{}, MealsState> {
               data={this.state.meals}            
               renderItem =  {
                 (meal) => {
-                  return (<View>          
-                      <ErrorBoundary meal={this.getMealProperties(meal.item)}></ErrorBoundary>
+                  return (<View>
                       <Meal { ...this.getMealProperties(meal.item)} inEditMode={meal.item.inEditMode} saveMeal={this.onMealUpdated} ></Meal>
                   </View>);
                 }

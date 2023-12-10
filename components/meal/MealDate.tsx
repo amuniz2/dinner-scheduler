@@ -10,10 +10,11 @@ type MealDateProps = {
   onDateChanged: (newDate: Date) => void,
   datePickerOpen: boolean;
   onOpenDatePicker: () => void
+  onUnSchedule?: () => void
 }
 
 type IconButtonProps = TouchableOpacityProps & {
-  title: string;
+  title?: string;
   icon?: any;
 }
 
@@ -23,7 +24,11 @@ const IconButton = ({ title, onPress, icon }: IconButtonProps) => (
     {icon}
   </TouchableOpacity>
 );
-
+const IconOnly = ({ onPress, icon }: IconButtonProps) => (
+  <TouchableOpacity style={styles.rightIcon} onPress={onPress}>
+    {icon}
+  </TouchableOpacity>
+);
 export class MealDate extends React.Component<MealDateProps> {
   constructor(props: MealDateProps) {
     super(props);
@@ -49,6 +54,12 @@ export class MealDate extends React.Component<MealDateProps> {
     
   }
 
+  onClearDate = () => {
+    if (this.props.onUnSchedule) {
+      this.props.onUnSchedule();  
+    }
+  }
+
   private days = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"];
   private formatDate = (date?: Date): string => {
     if (!date) {
@@ -64,15 +75,28 @@ export class MealDate extends React.Component<MealDateProps> {
     }
       
       //if (this.props.dateValue) {
-        return(
-          <View style={styles.buttonBar}>
-            <Text style={styles.parentView}>{this.props.dateLabel}</Text>
-            <View >
-              <IconButton title={this.formatDate(this.props.dateValue)}
-                onPress={this.onEditDate} icon={<Icon  style={styles.rightIcon} name="calendar" color="#900"></Icon>}>
-              </IconButton>
-            </View>
-          </View>);      
+        if (this.props.dateValue) 
+          return(
+            <View style={styles.buttonBar}>
+              <Text style={styles.parentView}>{this.props.dateLabel}</Text>
+              <View >
+                <IconButton title={this.props.dateValue ? this.formatDate(this.props.dateValue) : '-'}
+                  onPress={this.onEditDate} icon={<Icon  style={styles.rightIcon} name="calendar" color="#900"></Icon>}>
+                </IconButton>
+              </View>
+              {/*<View>
+                <IconOnly 
+                  onPress={this.onClearDate} icon={<Icon  style={styles.rightIcon} name="close a" color="#900"></Icon>}>
+                </IconOnly>  
+          </View>*/}
+            </View>);
+        else
+            return (<View>
+                <IconButton title='-'
+                  onPress={this.onEditDate} icon={<Icon  style={styles.rightIcon} name="calendar" color="#900"></Icon>}>
+                </IconButton>
+            </View>)
+
       /*}
       return(
         <View style={styles.buttonBar}>
@@ -96,21 +120,6 @@ export class MealDate extends React.Component<MealDateProps> {
       //margin: 2,
       fontWeight:"500"
     },
-    rightIcon: {
-      
-      alignSelf: "flex-end",
-          color: "#841584",
-      marginLeft:10,
-      fontSize: textFontSize + 2
-      },
-    item: {
-      backgroundColor: '#D4E6F1',
-      padding: 2,
-      //marginVertical: 2,
-      marginHorizontal: 2,
-      flexDirection: "row",
-      
-    },
     dateText: {      
       //margin: 2,
       fontSize: textFontSize
@@ -125,5 +134,10 @@ export class MealDate extends React.Component<MealDateProps> {
       fontSize:textFontSize,
       alignItems: "baseline"
     },
-    
+    rightIcon: {      
+      alignSelf: "flex-end",
+          color: "#841584",
+      marginLeft:10,
+      fontSize: textFontSize + 2
+      },        
   });
