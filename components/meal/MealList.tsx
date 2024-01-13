@@ -152,7 +152,15 @@ export class MealList extends React.Component<{}, MealsState> {
         //scheduleDatePickerOpen: meal.scheduleDatePickerOpen
       };
     }
-    addMeal = () => {}
+    addMeal = () => {
+      const newMeal:MealState = {
+        name: "<Enter new meal name>",
+        description: "<description>",
+        inEditMode: true,
+        originalName: ""
+      };
+      this.state.meals.push(newMeal);
+    }
 
     render() {
 
@@ -164,6 +172,7 @@ export class MealList extends React.Component<{}, MealsState> {
           <View style={styles.container}>
               <View style={styles.buttonBar}>
                   <Text style={styles.title}>Meal Schedule</Text>
+            
                   <AddIconButton style={styles.addIcon} 
                       onPress={this.addMeal} icon={<Icon  style={styles.addIcon} name="plus" color="#900"></Icon>}>
                   </AddIconButton>

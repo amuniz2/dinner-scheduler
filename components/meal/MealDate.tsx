@@ -84,11 +84,6 @@ export class MealDate extends React.Component<MealDateProps> {
                   onPress={this.onEditDate} icon={<Icon  style={styles.rightIcon} name="calendar" color="#900"></Icon>}>
                 </IconButton>
               </View>
-              {/*<View>
-                <IconOnly 
-                  onPress={this.onClearDate} icon={<Icon  style={styles.rightIcon} name="close a" color="#900"></Icon>}>
-                </IconOnly>  
-          </View>*/}
             </View>);
         else
             return (<View>

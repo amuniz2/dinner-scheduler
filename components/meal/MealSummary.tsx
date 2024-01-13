@@ -1,6 +1,6 @@
 import React from 'react';
-import { Text, TouchableOpacity, View, StyleSheet, GestureResponderEvent,  TouchableOpacityProps } from "react-native";
-import { DateType, IconButtonProps, MealState, MealSummaryProps } from '../interfaces/MealProps';
+import { Text, TouchableOpacity, View, StyleSheet, GestureResponderEvent } from "react-native";
+import { IconButtonProps, MealSummaryProps } from '../interfaces/MealProps';
 import  Icon  from 'react-native-vector-icons/SimpleLineIcons';
 //import  Icon  from 'react-native-vector-icons';
 import { MealDate } from './MealDate';
@@ -70,7 +70,7 @@ export class MealSummary extends React.Component<MealSummaryProps, MealSummarySt
             <MealDate dateLabel={this.props.nextDate ? 'Scheduled for:' : 'Not Scheduled'} onOpenDatePicker={this.onOpenNextDatePicker} 
             datePickerOpen={this.state.scheduleDatePickerOpen ?? false} dateValue={this.props.nextDate} onDateChanged={this.scheduleFor}></MealDate>
             <IconOnly 
-                onPress={this.onUnschedule} icon={<Icon  style={styles.rightIcon} name="close-a" color="#900"></Icon>}>
+                onPress={this.onUnschedule} icon={<Icon  style={styles.rightIcon} name="close" color="#900"></Icon>}>
             </IconOnly>  
         </View>         
         <View style={styles.buttonBar}>

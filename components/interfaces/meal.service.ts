@@ -39,7 +39,7 @@ export class MealService implements IMealService {
                 return 1;
             }
             if (aDate === bDate) return 0;
-            if (aDate > bDate) return -1;
+            if (aDate < bDate) return -1;
             return 1;
         });
         let lastScheduledMealDate = scheduledMeals[scheduledMeals.length -1].nextDate as Date;
