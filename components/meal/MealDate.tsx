@@ -87,6 +87,7 @@ export class MealDate extends React.Component<MealDateProps> {
             </View>);
         else
             return (<View>
+                <Text style={styles.parentView}>{this.props.dateLabel}</Text>
                 <IconButton title='-'
                   onPress={this.onEditDate} icon={<Icon  style={styles.rightIcon} name="calendar" color="#900"></Icon>}>
                 </IconButton>

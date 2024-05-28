@@ -162,6 +162,15 @@ export class MealList extends React.Component<{}, MealsState> {
       this.state.meals.push(newMeal);
     }
 
+    deleteMeal = (id: string) => {
+      for (var i = this.state.meals.length - 1; i >= 0; --i) {
+        if (this.state.meals[i].name === id) {
+          this.state.meals.splice(i,1);
+          return;
+        }
+      }
+    }
+    
     render() {
 
         if (this.state.loading) {
@@ -184,7 +193,8 @@ export class MealList extends React.Component<{}, MealsState> {
               renderItem =  {
                 (meal) => {
                   return (<View>
-                      <Meal { ...this.getMealProperties(meal.item)} inEditMode={meal.item.inEditMode} saveMeal={this.onMealUpdated} ></Meal>
+                      <Meal { ...this.getMealProperties(meal.item)} inEditMode={meal.item.inEditMode} saveMeal={this.onMealUpdated} 
+                      deleteMeal={this.deleteMeal}></Meal>
                   </View>);
                 }
               } 

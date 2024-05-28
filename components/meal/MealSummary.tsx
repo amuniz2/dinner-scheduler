@@ -5,7 +5,6 @@ import  Icon  from 'react-native-vector-icons/SimpleLineIcons';
 //import  Icon  from 'react-native-vector-icons';
 import { MealDate } from './MealDate';
 
-
 const EditIconButton = ({ onPress, icon }: IconButtonProps) => (
   <TouchableOpacity style={styles.editIcon} onPress={onPress}>
     {icon}
@@ -17,6 +16,15 @@ const IconOnly = ({ onPress, icon }: IconButtonProps) => (
     {icon}
   </TouchableOpacity>
 );
+
+
+const NotScheduledDate = () =>
+(
+  <View style={styles.buttonBar}>
+            <MealDate dateLabel={ 'Not Scheduled'} onOpenDatePicker={this.onOpenNextDatePicker} 
+            datePickerOpen={this.state.scheduleDatePickerOpen ?? false} dateValue={this.props.nextDate} onDateChanged={this.scheduleFor}></MealDate>
+   </View>       
+)
 
 interface MealSummaryState {
   lastDatePickerOpen: boolean,
@@ -33,6 +41,32 @@ export class MealSummary extends React.Component<MealSummaryProps, MealSummarySt
     };
   }
 
+  scheduledDate = (nextDate?: Date) => {
+    if (this.props.nextDate) {
+      return (<View>
+        <MealDate dateLabel={'Scheduled for:'} onOpenDatePicker={this.onOpenNextDatePicker} 
+        datePickerOpen={this.state.scheduleDatePickerOpen ?? false} dateValue={this.props.nextDate} onDateChanged={this.scheduleFor}></MealDate>
+        <IconOnly 
+            onPress={this.onUnschedule} icon={<Icon  style={styles.rightIcon} name="close" color="#900"></Icon>}>
+        </IconOnly>  
+      </View>)
+
+    }
+    else {
+      return (<View>
+        <MealDate dateLabel={'Not Scheduled'} onOpenDatePicker={this.onOpenNextDatePicker} 
+        datePickerOpen={this.state.scheduleDatePickerOpen ?? false} dateValue={this.props.nextDate} onDateChanged={this.scheduleFor}></MealDate>
+      </View>);
+    }
+  }
+  
+  
+  deleteMeal = (event: GestureResponderEvent): void => {
+    if (confirm("Are you sure you want to delete this meal?")) {
+      this.props.onDeleteMeal(this.props.name);
+    }
+  }
+  
   editMeal = (event: GestureResponderEvent): void => {
     // todo: propogate to parent to change state
     this.props.onEditMeal(this.props.name);
@@ -63,16 +97,19 @@ export class MealSummary extends React.Component<MealSummaryProps, MealSummarySt
           <Text style={styles.title}>{this.props.name}</Text>
           <EditIconButton
                 onPress={this.editMeal} icon={<Icon  style={styles.editIcon} name="pencil" color="#900"></Icon>}>
-              </EditIconButton>
+          </EditIconButton>
+          <EditIconButton
+            onPress={this.deleteMeal} icon={<Icon  style={styles.editIcon} name="trash-alt" color="#900"></Icon>}>
+          </EditIconButton>
         </View>
         <Text style={styles.description}>{this.props.description}</Text>
-        <View style={styles.buttonBar}>
-            <MealDate dateLabel={this.props.nextDate ? 'Scheduled for:' : 'Not Scheduled'} onOpenDatePicker={this.onOpenNextDatePicker} 
-            datePickerOpen={this.state.scheduleDatePickerOpen ?? false} dateValue={this.props.nextDate} onDateChanged={this.scheduleFor}></MealDate>
-            <IconOnly 
-                onPress={this.onUnschedule} icon={<Icon  style={styles.rightIcon} name="close" color="#900"></Icon>}>
-            </IconOnly>  
-        </View>         
+        <View>
+          <MealDate dateLabel={'Scheduled for:'} onOpenDatePicker={this.onOpenNextDatePicker} 
+          datePickerOpen={this.state.scheduleDatePickerOpen ?? false} dateValue={this.props.nextDate} onDateChanged={this.scheduleFor}></MealDate>
+          <IconOnly 
+              onPress={this.onUnschedule} icon={<Icon  style={styles.rightIcon} name="close" color="#900"></Icon>}>
+          </IconOnly>  
+        </View>)
         <View style={styles.buttonBar}>
             <MealDate dateLabel='Last served:' onOpenDatePicker={this.onOpenLastDatePicker} 
             datePickerOpen={this.state.lastDatePickerOpen ?? false} dateValue={this.props.lastDateServed} onDateChanged={this.handleLastEnteredDateChange}></MealDate>

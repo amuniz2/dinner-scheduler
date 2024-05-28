@@ -27,7 +27,8 @@ export interface SerializedMeal {
 export interface MealSummaryProps extends BaseMealProps {
     //meal: BaseMealProps;
     onEditMeal(id: string): void, // in MealSummary?,
-    setNewDateServed(id: string, newDate:Date): void,
+    setNewDateServed(id: string, newDate:Date): void
+    onDeleteMeal(id:string): void,
     scheduleMeal(id: string, newDate:Date): void,
     unscheduleMeal(id: string): void,
     scheduleDatePickerOpen?: boolean
@@ -48,7 +49,7 @@ export interface MealProps extends BaseMealProps{
     //meal: BaseMealProps; 
     inEditMode: boolean;
     saveMeal: (prevMealName: string, newMealProps: BaseMealProps, scheduleChange: boolean) => void;
-    
+    deleteMeal: (mealId: string) => void;
     //onMealClick: () => {}
 }
 

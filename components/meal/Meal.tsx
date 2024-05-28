@@ -32,6 +32,11 @@ export class Meal extends React.Component<MealProps, MealState> {
       this.setState({inEditMode: true});
     }
 
+    deleteMeal = (id: string) => {
+      
+      this.setState({inEditMode: false});
+      this.props.deleteMeal(id);
+    }
     scheduleMeal = (id: string, date: Date) => {
       this.setState({scheduleDatePickerOpen: false, nextDate: date});  
       this.props.saveMeal(id, {...this.props, nextDate: date}, true);
@@ -88,7 +93,8 @@ export class Meal extends React.Component<MealProps, MealState> {
           onOpenDatePicker={this.onDatePickerOpened}
           setNewDateServed={this.setDateServed} 
           unscheduleMeal={this.unscheduleMeal}
-          onEditMeal={this.editMeal} ></MealSummary>);
+          onEditMeal={this.editMeal} 
+          onDeleteMeal={this.deleteMeal}></MealSummary>);
       } else {
         return (<EditMeal {...this.buildEditMealProps()}></EditMeal>);
       }
