@@ -99,7 +99,7 @@ export class MealSummary extends React.Component<MealSummaryProps, MealSummarySt
                 onPress={this.editMeal} icon={<Icon  style={styles.editIcon} name="pencil" color="#900"></Icon>}>
           </EditIconButton>
           <EditIconButton
-            onPress={this.deleteMeal} icon={<Icon  style={styles.editIcon} name="trash-alt" color="#900"></Icon>}>
+            onPress={this.deleteMeal} icon={<Icon  style={styles.editIcon} name="trash" color="#900"></Icon>}>
           </EditIconButton>
         </View>
         <Text style={styles.description}>{this.props.description}</Text>
