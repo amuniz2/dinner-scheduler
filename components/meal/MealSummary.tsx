@@ -102,14 +102,14 @@ export class MealSummary extends React.Component<MealSummaryProps, MealSummarySt
             onPress={this.deleteMeal} icon={<Icon  style={styles.editIcon} name="trash" color="#900"></Icon>}>
           </EditIconButton>
         </View>
-        <Text style={styles.description}>{this.props.description}</Text>
+        <Text style={styles.description}>{this.props.description ?? ''}</Text>
         <View>
           <MealDate dateLabel={'Scheduled for:'} onOpenDatePicker={this.onOpenNextDatePicker} 
           datePickerOpen={this.state.scheduleDatePickerOpen ?? false} dateValue={this.props.nextDate} onDateChanged={this.scheduleFor}></MealDate>
           <IconOnly 
               onPress={this.onUnschedule} icon={<Icon  style={styles.rightIcon} name="close" color="#900"></Icon>}>
           </IconOnly>  
-        </View>)
+        </View>
         <View style={styles.buttonBar}>
             <MealDate dateLabel='Last served:' onOpenDatePicker={this.onOpenLastDatePicker} 
             datePickerOpen={this.state.lastDatePickerOpen ?? false} dateValue={this.props.lastDateServed} onDateChanged={this.handleLastEnteredDateChange}></MealDate>
